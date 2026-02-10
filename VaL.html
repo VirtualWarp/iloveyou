@@ -1,0 +1,67 @@
+<script>
+  const noBtn = document.getElementById("noBtn");
+  const yesBtn = document.getElementById("yesBtn");
+  const taunt = document.getElementById("taunt");
+  const message = document.getElementById("message");
+  const bgMusic = document.getElementById("bgMusic");
+
+  const taunts = [
+    "Nice try 😏",
+    "HAHAHAHAH 😈",
+    "Not happening 😂",
+    "You can’t pick that 😌",
+    "Try again 😎"
+  ];
+
+  function showTaunt() {
+    taunt.textContent = taunts[Math.floor(Math.random() * taunts.length)];
+    taunt.classList.add("show");
+    clearTimeout(showTaunt._t);
+    showTaunt._t = setTimeout(() => taunt.classList.remove("show"), 700);
+  }
+
+  function moveNoButton() {
+    const padding = 16;
+
+    const btnW = noBtn.offsetWidth;
+    const btnH = noBtn.offsetHeight;
+
+    const maxX = window.innerWidth - btnW - padding;
+    const maxY = window.innerHeight - btnH - padding;
+
+    const x = padding + Math.random() * maxX;
+    const y = padding + Math.random() * maxY;
+
+    noBtn.style.position = "fixed";
+    noBtn.style.left = `${x}px`;
+    noBtn.style.top = `${y}px`;
+
+    showTaunt();
+  }
+
+  // Old PC behavior
+  noBtn.addEventListener("mouseover", moveNoButton);
+  noBtn.addEventListener("mousedown", moveNoButton);
+
+  // Try autoplay on PC
+  function tryPlayMusic() {
+    bgMusic.volume = 0.6;
+    bgMusic.play().catch(() => {
+      // If blocked, we'll start on first user interaction
+    });
+  }
+
+  window.addEventListener("load", tryPlayMusic);
+
+  // Fallback: first click anywhere starts music (only once)
+  window.addEventListener("click", () => {
+    if (bgMusic.paused) tryPlayMusic();
+  }, { once: true });
+
+  yesBtn.addEventListener("click", () => {
+    noBtn.style.display = "none";
+    taunt.style.display = "none";
+    message.style.display = "block";
+    tryPlayMusic();
+  });
+</script>
